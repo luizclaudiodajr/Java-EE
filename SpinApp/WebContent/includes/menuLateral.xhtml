@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form>
+
+		<p:growl id="messages" />
+
+		<p:menu>
+			<p:submenu label="Clima">
+				<p:menuitem value="Vel. Vento" outcome="/pages/adm/graficos/VelocidadeVento.xhtml" />
+				<p:menuitem value="Temp. Ar" outcome="/pages/adm/graficos/TemperaturaAr.xhtml" />
+				<p:menuitem value="Temp. Solo" outcome="/pages/adm/graficos/TemperaturaSolo.xhtml" />
+				<p:menuitem value="Pluviometro" outcome="/pages/adm/graficos/Pluviometro.xhtml" />
+				<p:menuitem value="Pressão Atm." outcome="/pages/adm/graficos/PressaoAtm.xhtml" />
+				<p:menuitem value="Umid. Ar" outcome="/pages/adm/graficos/UmidadeAr.xhtml" />
+				<p:menuitem value="Umid. Solo" outcome="/pages/adm/graficos/UmidadeSolo.xhtml" />
+			</p:submenu>
+
+			<p:submenu label="Estatistica">
+				<p:menuitem value="Evapotranspiração" outcome="/pages/adm/graficos/Evapotranspiracao.xhtml" />
+				<p:menuitem value="Radiação" outcome="/pages/adm/graficos/Radiacao.xhtml" />
+				<p:menuitem value="Pragas" outcome="/pages/adm/graficos/Praga.xhtml" />
+				<p:menuitem value="Doença" outcome="/pages/adm/graficos/Doenca.xhtml" />
+			</p:submenu>
+
+			<p:submenu label="Plantação">
+				<p:menuitem value="Qualidade Planta" outcome="/pages/adm/graficos/QualidadePlanta.xhtml" />
+				<p:menuitem value="Estimativa Colheita" outcome="/pages/adm/graficos/EstimativaColheita.xhtml" />
+			</p:submenu>
+
+		</p:menu>
+
+	</h:form>
+</ui:composition>

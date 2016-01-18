@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form>
+
+		<p:growl id="messages" />
+
+		<p:menubar>
+			<p:menuitem value="Home" icon="ui-icon-home" outcome="/pages/adm/adm_index.xhtml" />
+
+			<p:submenu label="Cadastro" icon="ui-icon-person">
+				<p:menuitem value="Cadastro Cliente" outcome="/pages/adm/adm_Cliente.xhtml" />
+				<p:menuitem value="Cadastro Funcionario" outcome="/pages/adm/adm_Funcionario.xhtml" />
+			</p:submenu>
+
+			<p:submenu label="Cadastro Plano" icon="ui-icon-cart">
+				<p:menuitem value="Planos" outcome="/pages/adm/adm_Plano.xhtml" />
+				<p:menuitem value="Contrato" outcome="/pages/adm/adm_Assinatura.xhtml" />
+			</p:submenu>
+
+			<p:submenu label="Cadastro Plantação" icon="ui-icon-contact">
+				<p:menuitem value="Plantação" outcome="/pages/adm/adm_Plantacao.xhtml" />
+				<p:menuitem value="Planta" outcome="/pages/adm/adm_Planta.xhtml" />
+				<p:menuitem value="Doença" outcome="/pages/adm/adm_Doenca.xhtml" />
+				<p:menuitem value="Praga" outcome="/pages/adm/adm_Praga.xhtml" />
+			</p:submenu>
+
+			<p:submenu label="Cadastro Equipamento" icon="ui-icon-wrench">
+				<p:menuitem value="Modelo" outcome="/pages/adm/adm_Modelo.xhtml" />
+				<p:menuitem value="Tipo Sensor" outcome="/pages/adm/adm_TipoSensor.xhtml" />
+				<p:menuitem value="Sensor" outcome="/pages/adm/adm_Sensor.xhtml" />
+				<p:submenu label="Equipamento" >
+					<p:menuitem value="ServerPin" outcome="/pages/adm/adm_Serverpin.xhtml" />
+					<p:menuitem value="MaxPin" outcome="/pages/adm/adm_Equipamento.xhtml" />
+					<p:menuitem value="MinirPin" outcome="/pages/adm/adm_Equipamento.xhtml" />
+				</p:submenu>
+			</p:submenu>
+
+			<p:submenu label="Monitoramento" icon="ui-icon-image">
+				<p:menuitem value="Leitura" outcome="/pages/adm/adm_Leitura.xhtml" />
+				<p:menuitem value="Historico" outcome="/pages/adm/adm_Historico.xhtml" />
+				<p:menuitem value="Graficos" outcome="/pages/adm/adm_Grafico.xhtml" />
+			</p:submenu>
+
+			<p:submenu label="Ajuda" icon="ui-icon-help">
+				<p:menuitem value="Sobre" url="#" />
+			</p:submenu>
+
+			<f:facet name="options">
+				<p:inputText style="margin-right:10px" placeholder="Search" />
+				<p:commandButton type="button" value="Logout" icon="ui-icon-extlink" />
+			</f:facet>
+
+
+		</p:menubar>
+
+	</h:form>
+</ui:composition>

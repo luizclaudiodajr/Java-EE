@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/templateModel.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal_adm.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmServerpinList">
+			<!-- id do componente para atualização do ajax -->
+			<p:dataTable id="tblServerpin" widgetVar="tblwServerpin"
+				emptyMessage="Nenhum registro" var="item"
+				value="#{MBServerpin.itens}"
+				filteredValue="#{MBServerpin.itensFiltrados}" paginator="true"
+				rows="8">
+
+				<f:facet name="header">
+					<h:outputText value="Lista de ServerPin" />
+				</f:facet>
+
+				<p:column headerText="Id" sortBy="#{item.idserver}"
+					filterBy="#{item.idserver}">
+					<h:outputText value="#{item.idserver}" />
+				</p:column>
+
+				<p:column headerText="IP" sortBy="#{item.ip}" filterBy="#{item.ip}">
+					<h:outputText value="#{item.ip}" />
+				</p:column>
+
+				<p:column headerText="MAC" sortBy="#{item.mac}"
+					filterBy="#{item.mac}">
+					<h:outputText value="#{item.mac}" />
+				</p:column>
+
+				<p:column headerText="Porta" sortBy="#{item.porta}"
+					filterBy="#{item.porta}">
+					<h:outputText value="#{item.porta}" />
+				</p:column>
+
+				<p:column headerText="Latitude" sortBy="#{item.latitude}"
+					filterBy="#{item.latitude}">
+					<h:outputText value="#{item.latitude}" />
+				</p:column>
+
+				<p:column headerText="Longitude" sortBy="#{item.longitude}"
+					filterBy="#{item.longitude}">
+					<h:outputText value="#{item.longitude}" />
+				</p:column>
+
+				<p:column headerText="Altitude" sortBy="#{item.altitude}"
+					filterBy="#{item.altitude}">
+					<h:outputText value="#{item.altitude}" />
+				</p:column>
+
+				<p:column headerText="GSM" sortBy="#{item.gsm}"
+					filterBy="#{item.gsm}">
+					<h:outputText value="#{item.gsm}" />
+				</p:column>
+
+				<p:column headerText="Cliente" sortBy="#{item.cliente_idcliente}"
+					filterBy="#{item.cliente_idcliente}">
+					<h:outputText value="#{item.cliente_idcliente.nome}" />
+				</p:column>
+
+				<!--actionListener - Quando botão for presionado -->
+				<!-- actionListener="#{MBServerpin.prepararEditar}" actionListener="#{MBServerpin.prepararExcluir}" -->
+				<!--oncomplete -mostrar janela -->
+				<!--update - atualizar via ajax -->
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgServerpinDel').show();"
+						update=":frmServerpinDel:pnlServerpinDel">
+						<f:setPropertyActionListener target="#{MBServerpin.serverpin}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil" actionListener="#{MBServerpin.prepararEditar}"
+						oncomplete="PF('dlgServerpinEdit').show();"
+						update=":frmServerpinEdit:pnlServerpinEdit">
+						<f:setPropertyActionListener target="#{MBServerpin.serverpin}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBServerpin.prepararNovo}"
+						oncomplete="PF('dlgServerpinNew').show();"
+						update=":frmServerpinNew:pnlServerpinNew :msgGlobal" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgServerpinNew" closable="true"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Novo ServerPin">
+			<h:form id="frmServerpinNew">
+				<h:panelGrid id="pnlServerpinNew" columns="2">
+					<p:outputLabel value="IP" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBServerpin.serverpin.ip}" />
+					<p:outputLabel value="MAC" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBServerpin.serverpin.mac}" />
+					<p:outputLabel value="Porta" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBServerpin.serverpin.porta}" />
+					<p:outputLabel value="Latitude" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBServerpin.serverpin.latitude}" />
+					<p:outputLabel value="Longitude" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBServerpin.serverpin.longitude}" />
+					<p:outputLabel value="Altitude" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBServerpin.serverpin.altitude}" />
+					<p:outputLabel value="GSM" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBServerpin.serverpin.gsm}" />
+					<p:outputLabel value="Cliente" />
+					<p:selectOneMenu
+						value="#{MBServerpin.serverpin.cliente_idcliente.idcliente}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Cliente" />
+						<f:selectItems value="#{MBServerpin.comboCliente}" var="item"
+							itemValue="#{item.idcliente}" itemLabel="#{item.nome}" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<!-- actionListener operação para salvar no banco -->
+					<!-- oncomplete.hide fechar o dialogo -->
+					<!-- update atualizar componete ajax -->
+					<!-- msgGlobal mensagens -->
+					<!-- onclick+.hide() - Para fechar a janela de dialogo -->
+					<!-- tblwServerpin.clearFilters(); limpar tbl com AJAX -->
+					<p:commandButton value="Gravar"
+						actionListener="#{MBServerpin.novo}"
+						oncomplete="PF('dlgServerpinNew').hide(); tblwServerpin.clearFilters();"
+						update=":frmServerpinList:tblServerpin :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgServerpinNew').hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!--widgetVar - para abrir e fechar dialogo  -->
+		<!--closable - para não poder fechar no X-->
+		<!--draggable - para não poder arrastar -->
+		<!--resizable - para não poder redimensionar -->
+		<!--modal - para travar a janela de baixo-->
+		<!--appendTo - indicar que é separado do formulario principal -->
+		<!--header - cabeçalho do painel -->
+
+		<p:dialog widgetVar="dlgServerpinDel" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Excluir">
+			<h:form id="frmServerpinDel">
+				<h:panelGrid id="pnlServerpinDel" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBServerpin.serverpin.idserver}" />
+					<p:outputLabel value="MAC" />
+					<h:outputText value="#{MBServerpin.serverpin.mac}" />
+					<p:outputLabel value="Cliente" />
+					<h:outputText
+						value="#{MBServerpin.serverpin.cliente_idcliente.nome}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBServerpin.excluir}"
+						oncomplete="PF('dlgServerpinDel').hide(); tblwServerpin.clearFilters();"
+						update=":frmServerpinList:tblServerpin :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgServerpinDel').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgServerpinEdit" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Editar">
+			<h:form id="frmServerpinEdit">
+				<h:panelGrid id="pnlServerpinEdit" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBServerpin.serverpin.idserver}" />
+
+					<p:outputLabel value="IP" />
+					<p:inputText value="#{MBServerpin.serverpin.ip}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="MAC" />
+					<p:inputText value="#{MBServerpin.serverpin.mac}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Porta" />
+					<p:inputText value="#{MBServerpin.serverpin.porta}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Latitude" />
+					<p:inputText value="#{MBServerpin.serverpin.latitude}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Longitude" />
+					<p:inputText value="#{MBServerpin.serverpin.longitude}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Altitude" />
+					<p:inputText value="#{MBServerpin.serverpin.altitude}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="GSM" />
+					<p:inputText value="#{MBServerpin.serverpin.gsm}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Cliente" />
+					<p:selectOneMenu
+						value="#{MBServerpin.serverpin.cliente_idcliente.idcliente}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Cliente" />
+						<f:selectItems value="#{MBServerpin.comboCliente}" var="item"
+							itemValue="#{item.idcliente}" itemLabel="#{item.nome}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBServerpin.editar}"
+						oncomplete="PF('dlgServerpinEdit').hide(); tblwServerpin.clearFilters();"
+						update=":frmServerpinList:tblServerpin :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgServerpinEdit').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/templateModel.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal_adm.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmTipoSensorList">
+			<!-- id do componente para atualização do ajax -->
+			<p:dataTable id="tblTipoSensor" widgetVar="tblwTipoSensor"
+				emptyMessage="Nenhum registro" var="item"
+				value="#{MBTipoSensor.itens}"
+				filteredValue="#{MBTipoSensor.itensFiltrados}" paginator="true"
+				rows="8">
+
+				<f:facet name="header">
+					<h:outputText value="Lista Tipo de Sensor"/>
+    			</f:facet>
+
+				<p:column headerText="Id" sortBy="#{item.idtipo}"
+					filterBy="#{item.idtipo}">
+					<h:outputText value="#{item.idtipo}" />
+				</p:column>
+
+				<p:column headerText="Descrição" sortBy="#{item.descricao}"
+					filterBy="#{item.descricao}">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+
+				<p:column headerText="Unidade" sortBy="#{item.unidade}"
+					filterBy="#{item.unidade}">
+					<h:outputText value="#{item.unidade}" />
+				</p:column>
+
+				<!--actionListener - Quando botão for presionado -->
+				<!-- actionListener="#{MBTipoSensor.prepararEditar}" actionListener="#{MBTipoSensor.prepararExcluir}" -->
+				<!--oncomplete -mostrar janela -->
+				<!--update - atualizar via ajax -->
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgTipoSensorDel').show();"
+						update=":frmTipoSensorDel:pnlTipoSensorDel">
+						<f:setPropertyActionListener target="#{MBTipoSensor.tiposensor}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('dlgTipoSensorEdit').show();"
+						update=":frmTipoSensorEdit:pnlTipoSensorEdit">
+						<f:setPropertyActionListener target="#{MBTipoSensor.tiposensor}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBTipoSensor.prepararNovo}"
+						oncomplete="PF('dlgTipoSensorNew').show();"
+						update=":frmTipoSensorNew:pnlTipoSensorNew :msgGlobal" />
+				</f:facet>
+
+			</p:dataTable>
+			
+		</h:form>
+  
+		<p:dialog widgetVar="dlgTipoSensorNew" closable="true" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)" header="Novo Tipo Sensor">
+			<h:form id="frmTipoSensorNew">
+				<h:panelGrid id="pnlTipoSensorNew" columns="2">
+				
+					<p:outputLabel value="Descrição" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBTipoSensor.tiposensor.descricao}" />
+
+					<p:outputLabel value="Unidade" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBTipoSensor.tiposensor.unidade}" />
+					
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<!-- actionListener operação para salvar no banco -->
+					<!-- oncomplete.hide fechar o dialogo -->
+					<!-- update atualizar componete ajax -->
+					<!-- msgGlobal mensagens -->
+					<!-- onclick+.hide() - Para fechar a janela de dialogo -->
+					<!-- tblwTipoSensor.clearFilters(); limpar tbl com AJAX -->
+  					<p:commandButton value="Gravar" actionListener="#{MBTipoSensor.novo}"
+						oncomplete="PF('dlgTipoSensorNew').hide(); tblwTipoSensor.clearFilters();"
+						update=":frmTipoSensorList:tblTipoSensor :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgTipoSensorNew').hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!--widgetVar - para abrir e fechar dialogo  -->
+		<!--closable - para não poder fechar no X-->
+		<!--draggable - para não poder arrastar -->
+		<!--resizable - para não poder redimensionar -->
+		<!--modal - para travar a janela de baixo-->
+		<!--appendTo - indicar que é separado do formulario principal -->
+		<!--header - cabeçalho do painel -->
+
+  		<p:dialog widgetVar="dlgTipoSensorDel" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)" header="Excluir">
+			<h:form id="frmTipoSensorDel">
+				<h:panelGrid id="pnlTipoSensorDel" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBTipoSensor.tiposensor.idtipo}" />
+					<p:outputLabel value="Descrição" />
+					<h:outputText value="#{MBTipoSensor.tiposensor.descricao}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBTipoSensor.excluir}"
+						oncomplete="PF('dlgTipoSensorDel').hide(); tblwTipoSensor.clearFilters();"
+						update=":frmTipoSensorList:tblTipoSensor :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgTipoSensorDel').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgTipoSensorEdit" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)" header="Editar">
+			<h:form id="frmTipoSensorEdit">
+				<h:panelGrid id="pnlTipoSensorEdit" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBTipoSensor.tiposensor.idtipo}" />
+
+					<p:outputLabel value="Descrição" />
+					<p:inputText value="#{MBTipoSensor.tiposensor.descricao}" size="30"
+						maxlength="50" />
+						
+					<p:outputLabel value="Unidade" />
+					<p:inputText value="#{MBTipoSensor.tiposensor.unidade}" size="30"
+						maxlength="50" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar" actionListener="#{MBTipoSensor.editar}"
+						oncomplete="PF('dlgTipoSensorEdit').hide(); tblwTipoSensor.clearFilters();"
+						update=":frmTipoSensorList:tblTipoSensor :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgTipoSensorEdit').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

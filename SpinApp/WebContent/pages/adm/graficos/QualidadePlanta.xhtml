@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/templateClima.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal_cliente.xhtml" />
+	</ui:define>
+
+	<ui:define name="lateral">
+		<ui:include src="/includes/menuLateral.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Ano', 'Horas', 'Minimo', 'Máximo'],
+          ['01/05/2014',  0,      250,		800],
+          ['01/06/2014',  240,   250,		800],
+          ['01/07/2014',  420,    250,		800],
+          ['01/09/2014',  510,   250,		800],
+          ['01/10/2014',  610,   250,		800],
+          ['01/11/2014',  610,   250,		800]
+        ]);
+
+        var options = {
+          title: 'Horas de temperatura requerida'
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="chart_div" style="width: 900px; height: 500px;"></div>
+  </body>
+</html>
+
+
+
+	</ui:define>
+
+</ui:composition>

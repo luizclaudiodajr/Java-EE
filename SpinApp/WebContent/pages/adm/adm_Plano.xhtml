@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/templateModel.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal_adm.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmPlanoList">
+			<!-- id do componente para atualização do ajax -->
+			<p:dataTable id="tblPlano" widgetVar="tblwPlano"
+				emptyMessage="Nenhum registro" var="item" value="#{MBPlano.itens}"
+				filteredValue="#{MBPlano.itensFiltrados}" paginator="true" rows="8">
+
+				<f:facet name="header">
+					<h:outputText value="Lista de Plano"/>
+    			</f:facet>
+
+				<p:column headerText="Id" sortBy="#{item.idplano}"
+					filterBy="#{item.idplano}">
+					<h:outputText value="#{item.idplano}" />
+				</p:column>
+
+				<p:column headerText="Tipo" sortBy="#{item.tipo}"
+					filterBy="#{item.tipo}">
+					<h:outputText value="#{item.tipo}" />
+				</p:column>
+
+				<p:column headerText="Preço" sortBy="#{item.preco}"
+					filterBy="#{item.preco}">
+					<h:outputText value="#{item.preco}" />
+				</p:column>
+
+				<p:column headerText="Duração" sortBy="#{item.duracao}"
+					filterBy="#{item.duracao}">
+					<h:outputText value="#{item.duracao}" />
+				</p:column>
+
+				<p:column headerText="Descrição" sortBy="#{item.descricao}"
+					filterBy="#{item.descricao}">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+
+				<!--actionListener - Quando botão for presionado -->
+				<!-- actionListener="#{MBPlano.prepararEditar}" actionListener="#{MBPlano.prepararExcluir}" -->
+				<!--oncomplete -mostrar janela -->
+				<!--update - atualizar via ajax -->
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgPlanoDel').show();"
+						update=":frmPlanoDel:pnlPlanoDel">
+						<f:setPropertyActionListener target="#{MBPlano.plano}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('dlgPlanoEdit').show();"
+						update=":frmPlanoEdit:pnlPlanoEdit">
+						<f:setPropertyActionListener target="#{MBPlano.plano}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBPlano.prepararNovo}"
+						oncomplete="PF('dlgPlanoNew').show();"
+						update=":frmPlanoNew:pnlPlanoNew :msgGlobal" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgPlanoNew" closable="true" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)" header="Novo Plano">
+			<h:form id="frmPlanoNew">
+				<h:panelGrid id="pnlPlanoNew" columns="2">
+					<p:outputLabel value="Tipo" />
+					<p:inputText size="30" maxlength="50" value="#{MBPlano.plano.tipo}" />
+					<p:outputLabel value="Preço" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBPlano.plano.preco}" />
+					<p:outputLabel value="Duração" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBPlano.plano.duracao}" />
+					<p:outputLabel value="Descrição" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBPlano.plano.descricao}" />
+
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<!-- actionListener operação para salvar no banco -->
+					<!-- oncomplete.hide fechar o dialogo -->
+					<!-- update atualizar componete ajax -->
+					<!-- msgGlobal mensagens -->
+					<!-- onclick+.hide() - Para fechar a janela de dialogo -->
+					<!-- tblwPlano.clearFilters(); limpar tbl com AJAX -->
+					<p:commandButton value="Gravar" actionListener="#{MBPlano.novo}"
+						oncomplete="PF('dlgPlanoNew').hide(); tblwPlano.clearFilters();"
+						update=":frmPlanoList:tblPlano :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgPlanoNew').hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!--widgetVar - para abrir e fechar dialogo  -->
+		<!--closable - para não poder fechar no X-->
+		<!--draggable - para não poder arrastar -->
+		<!--resizable - para não poder redimensionar -->
+		<!--modal - para travar a janela de baixo-->
+		<!--appendTo - indicar que é separado do formulario principal -->
+		<!--header - cabeçalho do painel -->
+
+		<p:dialog widgetVar="dlgPlanoDel" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)" header="Excluir">
+			<h:form id="frmPlanoDel">
+				<h:panelGrid id="pnlPlanoDel" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBPlano.plano.idplano}" />
+					<p:outputLabel value="Tipo" />
+					<h:outputText value="#{MBPlano.plano.tipo}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBPlano.excluir}"
+						oncomplete="PF('dlgPlanoDel').hide(); tblwPlano.clearFilters();"
+						update=":frmPlanoList:tblPlano :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgPlanoDel').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgPlanoEdit" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)" header="Editar">
+			<h:form id="frmPlanoEdit">
+				<h:panelGrid id="pnlPlanoEdit" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBPlano.plano.idplano}" />
+
+					<p:outputLabel value="Tipo" />
+					<p:inputText value="#{MBPlano.plano.tipo}" size="30" maxlength="50" />
+
+					<p:outputLabel value="Preço" />
+					<p:inputText value="#{MBPlano.plano.preco}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Duração" />
+					<p:inputText value="#{MBPlano.plano.duracao}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Descrição" />
+					<p:inputText value="#{MBPlano.plano.descricao}" size="30"
+						maxlength="50" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar" actionListener="#{MBPlano.editar}"
+						oncomplete="PF('dlgPlanoEdit').hide(); tblwPlano.clearFilters();"
+						update=":frmPlanoList:tblPlano :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgPlanoEdit').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

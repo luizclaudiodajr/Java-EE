@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/templateModel.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal_adm.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmFuncionarioList">
+			<!-- id do componente para atualização do ajax -->
+			<p:dataTable id="tblFuncionario" widgetVar="tblwFuncionario"
+				emptyMessage="Nenhum registro" var="item"
+				value="#{MBFuncionario.itens}"
+				filteredValue="#{MBFuncionario.itensFiltrados}" paginator="true"
+				rows="8">
+
+				<f:facet name="header">
+					<h:outputText value="Lista de Funcionario" />
+				</f:facet>
+
+				<p:column headerText="Id" sortBy="#{item.idfuncionario}"
+					filterBy="#{item.idfuncionario}">
+					<h:outputText value="#{item.idfuncionario}" />
+				</p:column>
+
+				<p:column headerText="Nome" sortBy="#{item.nome}"
+					filterBy="#{item.nome}">
+					<h:outputText value="#{item.nome}" />
+				</p:column>
+
+				<p:column headerText="Celular" sortBy="#{item.celular}"
+					filterBy="#{item.celular}">
+					<h:outputText value="#{item.celular}" />
+				</p:column>
+
+				<p:column headerText="Email" sortBy="#{item.email}"
+					filterBy="#{item.email}">
+					<h:outputText value="#{item.email}" />
+				</p:column>
+
+				<p:column headerText="Senha" sortBy="#{item.senha}"
+					filterBy="#{item.senha}">
+					<h:outputText value="#{item.senha}" />
+				</p:column>
+
+				<p:column headerText="Cliente" sortBy="#{item.cliente_idcliente}"
+					filterBy="#{item.cliente_idcliente}">
+					<h:outputText value="#{item.cliente_idcliente.nome}" />
+				</p:column>
+
+				<!--actionListener - Quando botão for presionado -->
+				<!-- actionListener="#{MBFuncionario.prepararEditar}" actionListener="#{MBFuncionario.prepararExcluir}" -->
+				<!--oncomplete -mostrar janela -->
+				<!--update - atualizar via ajax -->
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgFuncionarioDel').show();"
+						update=":frmFuncionarioDel:pnlFuncionarioDel">
+						<f:setPropertyActionListener target="#{MBFuncionario.funcionario}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil" actionListener="#{MBFuncionario.prepararEditar}"
+						oncomplete="PF('dlgFuncionarioEdit').show();"
+						update=":frmFuncionarioEdit:pnlFuncionarioEdit">
+						<f:setPropertyActionListener target="#{MBFuncionario.funcionario}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBFuncionario.prepararNovo}"
+						oncomplete="PF('dlgFuncionarioNew').show();"
+						update=":frmFuncionarioNew:pnlFuncionarioNew :msgGlobal" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgFuncionarioNew" closable="true"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Novo Funcionario">
+			<h:form id="frmFuncionarioNew">
+				<h:panelGrid id="pnlFuncionarioNew" columns="2">
+					<p:outputLabel value="Nome" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBFuncionario.funcionario.nome}" />
+					<p:outputLabel value="Celular" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBFuncionario.funcionario.celular}" />
+					<p:outputLabel value="Email" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBFuncionario.funcionario.email}" />
+					<p:outputLabel value="Senha" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBFuncionario.funcionario.senha}" />
+					<p:outputLabel value="Cliente" />
+					<p:selectOneMenu
+						value="#{MBFuncionario.funcionario.cliente_idcliente.idcliente}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Cliente" />
+						<f:selectItems value="#{MBFuncionario.comboCliente}" var="item"
+							itemValue="#{item.idcliente}" itemLabel="#{item.nome}" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<!-- actionListener operação para salvar no banco -->
+					<!-- oncomplete.hide fechar o dialogo -->
+					<!-- update atualizar componete ajax -->
+					<!-- msgGlobal mensagens -->
+					<!-- onclick+.hide() - Para fechar a janela de dialogo -->
+					<!-- tblwFuncionario.clearFilters(); limpar tbl com AJAX -->
+					<p:commandButton value="Gravar"
+						actionListener="#{MBFuncionario.novo}"
+						oncomplete="PF('dlgFuncionarioNew').hide(); tblwFuncionario.clearFilters();"
+						update=":frmFuncionarioList:tblFuncionario :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgFuncionarioNew').hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!--widgetVar - para abrir e fechar dialogo  -->
+		<!--closable - para não poder fechar no X-->
+		<!--draggable - para não poder arrastar -->
+		<!--resizable - para não poder redimensionar -->
+		<!--modal - para travar a janela de baixo-->
+		<!--appendTo - indicar que é separado do formulario principal -->
+		<!--header - cabeçalho do painel -->
+
+		<p:dialog widgetVar="dlgFuncionarioDel" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Excluir">
+			<h:form id="frmFuncionarioDel">
+				<h:panelGrid id="pnlFuncionarioDel" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBFuncionario.funcionario.idfuncionario}" />
+					<p:outputLabel value="Nome" />
+					<h:outputText value="#{MBFuncionario.funcionario.nome}" />
+					<p:outputLabel value="Cliente" />
+					<h:outputText
+						value="#{MBFuncionario.funcionario.cliente_idcliente.nome}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBFuncionario.excluir}"
+						oncomplete="PF('dlgFuncionarioDel').hide(); tblwFuncionario.clearFilters();"
+						update=":frmFuncionarioList:tblFuncionario :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgFuncionarioDel').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgFuncionarioEdit" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Editar">
+			<h:form id="frmFuncionarioEdit">
+				<h:panelGrid id="pnlFuncionarioEdit" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBFuncionario.funcionario.idfuncionario}" />
+
+					<p:outputLabel value="Nome" />
+					<p:inputText value="#{MBFuncionario.funcionario.nome}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Celular" />
+					<p:inputText value="#{MBFuncionario.funcionario.celular}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Email" />
+					<p:inputText value="#{MBFuncionario.funcionario.email}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Senha" />
+					<p:inputText value="#{MBFuncionario.funcionario.senha}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Cliente" />
+					<p:selectOneMenu
+						value="#{MBFuncionario.funcionario.cliente_idcliente.idcliente}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Cliente" />
+						<f:selectItems value="#{MBFuncionario.comboCliente}" var="item"
+							itemValue="#{item.idcliente}" itemLabel="#{item.nome}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBFuncionario.editar}"
+						oncomplete="PF('dlgFuncionarioEdit').hide(); tblwFuncionario.clearFilters();"
+						update=":frmFuncionarioList:tblFuncionario :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgFuncionarioEdit').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

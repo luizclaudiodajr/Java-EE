@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form>
+		<script src="http://maps.google.com/maps/api/js?sensor=true|false"
+			type="text/javascript"></script>
+
+		<p:gmap center="-22.256622, -45.694294" zoom="18" type="hybrid"
+			style="width:600px;height:400px" model="#{MapBean.simpleModel}" />
+
+
+		<!--inatel -22.2407408, -45.6868174 -->
+	</h:form>
+</ui:composition>

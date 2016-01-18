@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form>
+
+		<p:growl id="messages" />
+
+		<p:menubar>
+			<p:menuitem value="Inicio" url="#" />
+
+			<p:submenu label="Pessoal" icon="ui-icon-document">
+				<p:submenu label="Dados Pessoais" icon="ui-icon-contact">
+					<p:menuitem value="Seu cadastro" url="#" />
+					<p:menuitem value="Alterar dados" url="#" />
+				</p:submenu>
+
+				<p:separator />
+				<p:menuitem value="Contrato" url="#" />
+
+			</p:submenu>
+
+			<p:submenu label="Plano" icon="ui-icon-contact">
+				<p:menuitem value="Seu plano" url="#" />
+				<p:menuitem value="Novos planos" url="#" />
+			</p:submenu>
+
+			<p:submenu label="Funcionarios" icon="ui-icon-contact">
+				<p:menuitem value="Seus funcionarios" url="#" />
+				<p:menuitem value="Cadastrar Funcionario" url="#" />
+				<p:menuitem value="Atualizar cadastro" url="#" />
+			</p:submenu>
+
+			<p:submenu label="Plantação" icon="ui-icon-contact">
+				<p:menuitem value="Plantas" url="#" />
+				<p:menuitem value="Pragas" url="#" />
+				<p:menuitem value="Doença" url="#" />
+			</p:submenu>
+
+			<p:submenu label="Equipamentos" icon="ui-icon-contact">
+				<p:menuitem value="Status" url="#" />
+				<p:menuitem value="Seus equipamentos" url="#" />
+				<p:menuitem value="Localização" url="#" />
+			</p:submenu>
+
+			<p:submenu label="Monitoramento" icon="ui-icon-contact">
+				<p:menuitem value="Leitura Atual" url="#" />
+				<p:menuitem value="Historico" url="#" />
+				<p:menuitem value="Graficos" url="#" />
+			</p:submenu>
+
+			<p:submenu label="Ajuda" icon="ui-icon-contact">
+				<p:menuitem value="Sobre" url="#" />
+			</p:submenu>
+
+			<f:facet name="options">
+				<p:inputText style="margin-right:10px" placeholder="Search" />
+				<p:commandButton type="button" value="Logout" icon="ui-icon-extlink" />
+			</f:facet>
+
+
+		</p:menubar>
+
+	</h:form>
+</ui:composition>

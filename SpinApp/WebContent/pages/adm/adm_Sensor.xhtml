@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/templateModel.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal_adm.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmSensorList">
+			<!-- id do componente para atualização do ajax -->
+			<p:dataTable id="tblSensor" widgetVar="tblwSensor"
+				emptyMessage="Nenhum registro" var="item"
+				value="#{MBSensor.itens}"
+				filteredValue="#{MBSensor.itensFiltrados}" paginator="true"
+				rows="8">
+
+				<f:facet name="header">
+					<h:outputText value="Lista de Sensores" />
+				</f:facet>
+
+				<p:column headerText="Id" sortBy="#{item.idsensor}"
+					filterBy="#{item.idsensor}">
+					<h:outputText value="#{item.idsensor}" />
+				</p:column>
+
+				<p:column headerText="Equipamento" sortBy="#{item.equipamento_idequip}"
+					filterBy="#{item.equipamento_idequip}">
+					<h:outputText value="#{item.equipamento_idequip.mac}" />
+				</p:column>
+				
+				<p:column headerText="Tipo Sensor" sortBy="#{item.tiposensor_idtipo}"
+					filterBy="#{item.tiposensor_idtipo}">
+					<h:outputText value="#{item.tiposensor_idtipo.descricao}" />
+				</p:column>
+
+				<!--actionListener - Quando botão for presionado -->
+				<!-- actionListener="#{MBSensor.prepararEditar}" actionListener="#{MBSensor.prepararExcluir}" -->
+				<!--oncomplete -mostrar janela -->
+				<!--update - atualizar via ajax -->
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgSensorDel').show();"
+						update=":frmSensorDel:pnlSensorDel">
+						<f:setPropertyActionListener target="#{MBSensor.sensor}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil" actionListener="#{MBSensor.prepararEditar}"
+						oncomplete="PF('dlgSensorEdit').show();"
+						update=":frmSensorEdit:pnlSensorEdit">
+						<f:setPropertyActionListener target="#{MBSensor.sensor}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBSensor.prepararNovo}"
+						oncomplete="PF('dlgSensorNew').show();"
+						update=":frmSensorNew:pnlSensorNew :msgGlobal" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgSensorNew" closable="true"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Novo Sensor">
+			<h:form id="frmSensorNew">
+				<h:panelGrid id="pnlSensorNew" columns="2">
+					
+					<p:outputLabel value="Equipamento" />
+					<p:selectOneMenu
+						value="#{MBSensor.sensor.equipamento_idequip.idequip}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Equipamento" />
+						<f:selectItems value="#{MBSensor.comboEquipamento}" var="item"
+							itemValue="#{item.idequip}" itemLabel="#{item.mac}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Tipo Sensor" />
+					<p:selectOneMenu
+						value="#{MBSensor.sensor.tiposensor_idtipo.idtipo}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Tipo" />
+						<f:selectItems value="#{MBSensor.comboTipoSensor}" var="item"
+							itemValue="#{item.idtipo}" itemLabel="#{item.descricao}" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<!-- actionListener operação para salvar no banco -->
+					<!-- oncomplete.hide fechar o dialogo -->
+					<!-- update atualizar componete ajax -->
+					<!-- msgGlobal mensagens -->
+					<!-- onclick+.hide() - Para fechar a janela de dialogo -->
+					<!-- tblwSensor.clearFilters(); limpar tbl com AJAX -->
+					<p:commandButton value="Gravar"
+						actionListener="#{MBSensor.novo}"
+						oncomplete="PF('dlgSensorNew').hide(); tblwSensor.clearFilters();"
+						update=":frmSensorList:tblSensor :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgSensorNew').hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!--widgetVar - para abrir e fechar dialogo  -->
+		<!--closable - para não poder fechar no X-->
+		<!--draggable - para não poder arrastar -->
+		<!--resizable - para não poder redimensionar -->
+		<!--modal - para travar a janela de baixo-->
+		<!--appendTo - indicar que é separado do formulario principal -->
+		<!--header - cabeçalho do painel -->
+
+		<p:dialog widgetVar="dlgSensorDel" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Excluir">
+			<h:form id="frmSensorDel">
+				<h:panelGrid id="pnlSensorDel" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBSensor.sensor.idsensor}" />
+					<p:outputLabel value="Tipo Sensor" />
+					<h:outputText value="#{MBSensor.sensor.tiposensor_idtipo.descricao}" />
+					<p:outputLabel value="Equipamento" />
+					<h:outputText value="#{MBSensor.sensor.equipamento_idequip.mac}" />
+	
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBSensor.excluir}"
+						oncomplete="PF('dlgSensorDel').hide(); tblwSensor.clearFilters();"
+						update=":frmSensorList:tblSensor :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgSensorDel').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgSensorEdit" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Editar">
+			<h:form id="frmSensorEdit">
+				<h:panelGrid id="pnlSensorEdit" columns="2">
+				
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBSensor.sensor.idsensor}" />
+
+					<p:outputLabel value="Equipamento" />
+					<p:selectOneMenu
+						value="#{MBSensor.sensor.equipamento_idequip.idequip}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Equipamento" />
+						<f:selectItems value="#{MBSensor.comboEquipamento}" var="item"
+							itemValue="#{item.idequip}" itemLabel="#{item.mac}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Tipo Sensor" />
+					<p:selectOneMenu
+						value="#{MBSensor.sensor.tiposensor_idtipo.idtipo}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Tipo" />
+						<f:selectItems value="#{MBSensor.comboTipoSensor}" var="item"
+							itemValue="#{item.idtipo}" itemLabel="#{item.descricao}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBSensor.editar}"
+						oncomplete="PF('dlgSensorEdit').hide(); tblwSensor.clearFilters();"
+						update=":frmSensorList:tblSensor :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgSensorEdit').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

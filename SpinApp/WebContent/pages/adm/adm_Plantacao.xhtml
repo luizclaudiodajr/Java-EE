@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/templateModel.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal_adm.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmPlantacaoList">
+			<!-- id do componente para atualização do ajax -->
+			<p:dataTable id="tblPlantacao" widgetVar="tblwPlantacao"
+				emptyMessage="Nenhum registro" var="item"
+				value="#{MBPlantacao.itens}"
+				filteredValue="#{MBPlantacao.itensFiltrados}" paginator="true"
+				rows="8">
+
+				<f:facet name="header">
+					<h:outputText value="Lista de Plantação" />
+				</f:facet>
+
+				<p:column headerText="Id" sortBy="#{item.idplantacao}"
+					filterBy="#{item.idplantacao}">
+					<h:outputText value="#{item.idplantacao}" />
+				</p:column>
+
+				<p:column headerText="Data do Plantio" sortBy="#{item.data_plantio}"
+					filterBy="#{item.data_plantio}">
+					<h:outputText value="#{item.data_plantio}" >
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Area" sortBy="#{item.area}"
+					filterBy="#{item.area}">
+					<h:outputText value="#{item.area}" />
+				</p:column>
+
+				<p:column headerText="Tipo Planta" sortBy="#{item.planta_idplanta.nome}"
+					filterBy="#{item.planta_idplanta.nome}">
+					<h:outputText value="#{item.planta_idplanta.nome}" />
+				</p:column>
+
+				<p:column headerText="Cliente" sortBy="#{item.cliente_idcliente.nome}"
+					filterBy="#{item.cliente_idcliente.nome}">
+					<h:outputText value="#{item.cliente_idcliente.nome}" />
+				</p:column>
+
+				<!--actionListener - Quando botão for presionado -->
+				<!-- actionListener="#{MBPlantacao.prepararEditar}" actionListener="#{MBPlantacao.prepararExcluir}" -->
+				<!--oncomplete -mostrar janela -->
+				<!--update - atualizar via ajax -->
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgPlantacaoDel').show();"
+						update=":frmPlantacaoDel:pnlPlantacaoDel">
+						<f:setPropertyActionListener target="#{MBPlantacao.plantacao}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<!-- Target pega o item corrente para mostrar -->
+
+					<p:commandButton icon="ui-icon-pencil" actionListener="#{MBPlantacao.prepararEditar}"
+						oncomplete="PF('dlgPlantacaoEdit').show();"
+						update=":frmPlantacaoEdit:pnlPlantacaoEdit">
+						<f:setPropertyActionListener target="#{MBPlantacao.plantacao}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBPlantacao.prepararNovo}"
+						oncomplete="PF('dlgPlantacaoNew').show();"
+						update=":frmPlantacaoNew:pnlPlantacaoNew :msgGlobal" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgPlantacaoNew" closable="true"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Novo Plantação">
+			<h:form id="frmPlantacaoNew">
+				<h:panelGrid id="pnlPlantacaoNew" columns="2">
+				
+					<p:outputLabel value="Area" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBPlantacao.plantacao.area}" />
+				
+					<p:outputLabel value="Data Plantio" />
+					<p:outputLabel>
+						<p:calendar value="#{MBPlantacao.plantacao.data_plantio}" pattern="dd/MM/yyyy" locale="pt_BR" mask="true" />
+				    	<f:convertDateTime pattern="yyyy-MM-dd" />
+					</p:outputLabel>
+						
+					<p:outputLabel value="Tipo Planta"/>
+  					<p:selectOneMenu value="#{MBPlantacao.plantacao.planta_idplanta.idplanta}" filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione a planta"/>
+						<f:selectItems value="#{MBPlantacao.comboPlanta}" var="item" itemValue="#{item.idplanta}" itemLabel="#{item.nome}"/>
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Cliente"/>
+  					<p:selectOneMenu value="#{MBPlantacao.plantacao.cliente_idcliente.idcliente}" filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Cliente"/>
+						<f:selectItems value="#{MBPlantacao.comboCliente}" var="item" itemValue="#{item.idcliente}" itemLabel="#{item.nome}"/>
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<!-- actionListener operação para salvar no banco -->
+					<!-- oncomplete.hide fechar o dialogo -->
+					<!-- update atualizar componete ajax -->
+					<!-- msgGlobal mensagens -->
+					<!-- onclick+.hide() - Para fechar a janela de dialogo -->
+					<!-- tblwPlantacao.clearFilters(); limpar tbl com AJAX -->
+					<p:commandButton value="Gravar"
+						actionListener="#{MBPlantacao.novo}"
+						oncomplete="PF('dlgPlantacaoNew').hide(); tblwPlantacao.clearFilters();"
+						update=":frmPlantacaoList:tblPlantacao :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgPlantacaoNew').hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!--widgetVar - para abrir e fechar dialogo  -->
+		<!--closable - para não poder fechar no X-->
+		<!--draggable - para não poder arrastar -->
+		<!--resizable - para não poder redimensionar -->
+		<!--modal - para travar a janela de baixo-->
+		<!--appendTo - indicar que é separado do formulario principal -->
+		<!--header - cabeçalho do painel -->
+
+		<p:dialog widgetVar="dlgPlantacaoDel" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Excluir">
+			<h:form id="frmPlantacaoDel">
+				<h:panelGrid id="pnlPlantacaoDel" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBPlantacao.plantacao.idplantacao}" />
+					<p:outputLabel value="Tipo Planta" />
+					<h:outputText value="#{MBPlantacao.plantacao.planta_idplanta.nome}" />
+					<p:outputLabel value="Cliente" />
+					<h:outputText value="#{MBPlantacao.plantacao.cliente_idcliente.nome}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBPlantacao.excluir}"
+						oncomplete="PF('dlgPlantacaoDel').hide(); tblwPlantacao.clearFilters();"
+						update=":frmPlantacaoList:tblPlantacao :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgPlantacaoDel').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgPlantacaoEdit" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Editar">
+			<h:form id="frmPlantacaoEdit">
+				<h:panelGrid id="pnlPlantacaoEdit" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBPlantacao.plantacao.idplantacao}" />
+
+					<p:outputLabel value="Area" />
+					<p:inputText value="#{MBPlantacao.plantacao.area}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Data Plantio" />
+					<p:outputLabel>
+						<p:calendar value="#{MBPlantacao.plantacao.data_plantio}" pattern="dd/MM/yyyy" locale="pt_BR" mask="true" />
+				    	<f:convertDateTime pattern="yyyy-MM-dd" />
+					</p:outputLabel>
+					
+					<p:outputLabel value="Tipo Planta"/>
+  					<p:selectOneMenu value="#{MBPlantacao.plantacao.planta_idplanta.idplanta}" filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione a planta"/>
+						<f:selectItems value="#{MBPlantacao.comboPlanta}" var="item" itemValue="#{item.idplanta}" itemLabel="#{item.nome}"/>
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Cliente"/>
+  					<p:selectOneMenu value="#{MBPlantacao.plantacao.cliente_idcliente.idcliente}" filter="true" >
+						<f:selectItem itemValue="" itemLabel="Selecione o Cliente"/>
+						<f:selectItems value="#{MBPlantacao.comboCliente}" var="item" itemValue="#{item.idcliente}" itemLabel="#{item.nome}"/>
+					</p:selectOneMenu>
+					
+					
+					<!-- itemValue = o que é gravado no banco-->
+					<!-- itemLabel = o que é mostrado para o usuario-->
+					
+					
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBPlantacao.editar}"
+						oncomplete="PF('dlgPlantacaoEdit').hide(); tblwPlantacao.clearFilters();"
+						update=":frmPlantacaoList:tblPlantacao :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgPlantacaoEdit').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

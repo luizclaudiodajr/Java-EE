@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/templateModel.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal_adm.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmHistoricoList">
+			<!-- id do componente para atualização do ajax -->
+			<p:dataTable id="tblHistorico" widgetVar="tblwHistorico"
+				emptyMessage="Nenhum registro" var="item"
+				value="#{MBHistorico.itens}"
+				filteredValue="#{MBHistorico.itensFiltrados}" paginator="true"
+				rows="8">
+
+				<f:facet name="header">
+					<h:outputText value="Lista de Historico" />
+				</f:facet>
+
+				<p:column headerText="Id" sortBy="#{item.idhistorico}"
+					filterBy="#{item.idhistorico}">
+					<h:outputText value="#{item.idhistorico}" />
+				</p:column>
+
+				<p:column headerText="Valor" sortBy="#{item.valor}"
+					filterBy="#{item.valor}">
+					<h:outputText value="#{item.valor}" />
+				</p:column>
+
+				<p:column headerText="Data" sortBy="#{item.data}"
+					filterBy="#{item.data}">
+					<h:outputText value="#{item.data}" >
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Hora" sortBy="#{item.hora}"
+					filterBy="#{item.hora}">
+					<h:outputText value="#{item.hora}">
+						<f:convertDateTime pattern="HH:mm:ss aa" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Sensor" sortBy="#{item.sensor_idsensor.idsensor}"
+					filterBy="#{item.sensor_idsensor.idsensor}">
+					<h:outputText value="#{item.sensor_idsensor.idsensor}" />
+				</p:column>
+
+				<!--actionListener - Quando botão for presionado -->
+				<!-- actionListener="#{MBHistorico.prepararEditar}" actionListener="#{MBHistorico.prepararExcluir}" -->
+				<!--oncomplete -mostrar janela -->
+				<!--update - atualizar via ajax -->
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgSensorDel').show();"
+						update=":frmSensorDel:pnlSensorDel">
+						<f:setPropertyActionListener target="#{MBHistorico.historico}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil" 
+						actionListener="#{MBHistorico.prepararEditar}"
+						oncomplete="PF('dlgHistoricoEdit').show();"
+						update=":frmHistoricoEdit:pnlHistoricoEdit">
+						<f:setPropertyActionListener target="#{MBHistorico.historico}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBHistorico.prepararNovo}"
+						oncomplete="PF('dlgHistoricoNew').show();"
+						update=":frmHistoricoNew:pnlHistoricoNew :msgGlobal" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgHistoricoNew" closable="true"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Nova Historico">
+			<h:form id="frmHistoricoNew">
+				<h:panelGrid id="pnlHistoricoNew" columns="2">
+
+					<p:outputLabel value="Valor" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBHistorico.historico.valor}" />
+							
+					<p:outputLabel value="Data" />
+					<p:outputLabel>
+						<p:calendar value="#{MBHistorico.historico.data}" pattern="dd/MM/yyyy" locale="pt_BR" mask="true" />
+				    	<f:convertDateTime pattern="yyyy-MM-dd" />
+					</p:outputLabel>
+					
+					<p:outputLabel value="Hora" />
+					<p:outputLabel>
+						<p:calendar value="#{MBHistorico.historico.hora}" pattern="HH:mm a" timeOnly="true" timeZone="America/Sao_Paulo"/>
+				    	<f:convertDateTime pattern="HH:mm:ss as"  />
+					</p:outputLabel>
+
+					<p:outputLabel value="Sensor"/>
+  					<p:selectOneMenu value="#{MBHistorico.historico.sensor_idsensor.idsensor}" filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o sensor"/>
+						<f:selectItems value="#{MBHistorico.comboSensor}" var="item" itemValue="#{item.idsensor}" itemLabel="#{item.idsensor}"/>
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<!-- actionListener operação para salvar no banco -->
+					<!-- oncomplete.hide fechar o dialogo -->
+					<!-- update atualizar componete ajax -->
+					<!-- msgGlobal mensagens -->
+					<!-- onclick+.hide() - Para fechar a janela de dialogo -->
+					<!-- tblwHistorico.clearFilters(); limpar tbl com AJAX -->
+					<p:commandButton value="Gravar"
+						actionListener="#{MBHistorico.novo}"
+						oncomplete="PF('dlgHistoricoNew').hide(); tblwHistorico.clearFilters();"
+						update=":frmHistoricoList:tblHistorico :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgHistoricoNew').hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!--widgetVar - para abrir e fechar dialogo  -->
+		<!--closable - para não poder fechar no X-->
+		<!--draggable - para não poder arrastar -->
+		<!--resizable - para não poder redimensionar -->
+		<!--modal - para travar a janela de baixo-->
+		<!--appendTo - indicar que é separado do formulario principal -->
+		<!--header - cabeçalho do painel -->
+
+		<p:dialog widgetVar="dlgSensorDel" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Excluir">
+			<h:form id="frmSensorDel">
+				<h:panelGrid id="pnlSensorDel" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBHistorico.historico.idhistorico}" />
+					<p:outputLabel value="Valor" />
+					<h:outputText value="#{MBHistorico.historico.valor}" />
+					<p:outputLabel value="Cliente" />
+					<h:outputText value="#{MBHistorico.historico.sensor_idsensor.idsensor}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBHistorico.excluir}"
+						oncomplete="PF('dlgSensorDel').hide(); tblwHistorico.clearFilters();"
+						update=":frmHistoricoList:tblHistorico :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgSensorDel').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgHistoricoEdit" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Editar">
+			<h:form id="frmHistoricoEdit">
+				<h:panelGrid id="pnlHistoricoEdit" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBHistorico.historico.idhistorico}" />
+					
+					<p:outputLabel value="Valor" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBHistorico.historico.valor}" />
+
+					<p:outputLabel value="Data" />
+					<p:outputLabel>
+						<p:calendar value="#{MBHistorico.historico.data}" pattern="dd/MM/yyyy" locale="pt_BR" mask="true" />
+				    	<f:convertDateTime pattern="yyyy-MM-dd" />
+					</p:outputLabel>
+					
+					<p:outputLabel value="Hora" />
+					<p:outputLabel>
+						<p:calendar value="#{MBHistorico.historico.hora}" pattern="HH:mm a" timeOnly="true" locale="pt_BR" />
+				    	<f:convertDateTime pattern="HH:mm a" />
+					</p:outputLabel>
+
+
+
+					<p:outputLabel value="Sensor"/>
+  					<p:selectOneMenu value="#{MBHistorico.historico.sensor_idsensor.idsensor}" filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Sensor"/>
+						<f:selectItems value="#{MBHistorico.comboSensor}" var="item" itemValue="#{item.idsensor}" itemLabel="#{item.idsensor}"/>
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBHistorico.editar}"
+						oncomplete="PF('dlgHistoricoEdit').hide(); tblwHistorico.clearFilters();"
+						update=":frmHistoricoList:tblHistorico :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgHistoricoEdit').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

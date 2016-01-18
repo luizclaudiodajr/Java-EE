@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/templateModel.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal_adm.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmEquipamentoList">
+			<!-- id do componente para atualização do ajax -->
+			<p:dataTable id="tblEquipamento" widgetVar="tblwEquipamento"
+				emptyMessage="Nenhum registro" var="item"
+				value="#{MBEquipamento.itens}"
+				filteredValue="#{MBEquipamento.itensFiltrados}" paginator="true"
+				rows="8">
+
+				<f:facet name="header">
+					<h:outputText value="Lista de Equipamentos" />
+				</f:facet>
+
+				<p:column headerText="Id" sortBy="#{item.idequip}"
+					filterBy="#{item.idequip}">
+					<h:outputText value="#{item.idequip}" />
+				</p:column>
+
+				<p:column headerText="MAC" sortBy="#{item.mac}"
+					filterBy="#{item.mac}">
+					<h:outputText value="#{item.mac}" />
+				</p:column>
+
+				<p:column headerText="Latitude" sortBy="#{item.latitude}"
+					filterBy="#{item.latitude}">
+					<h:outputText value="#{item.latitude}" />
+				</p:column>
+
+				<p:column headerText="Longitude" sortBy="#{item.longitude}"
+					filterBy="#{item.longitude}">
+					<h:outputText value="#{item.longitude}" />
+				</p:column>
+
+				<p:column headerText="Altitude" sortBy="#{item.altitude}"
+					filterBy="#{item.altitude}">
+					<h:outputText value="#{item.altitude}" />
+				</p:column>
+
+				<p:column headerText="ServerPin" sortBy="#{item.serverpin_idserver}"
+					filterBy="#{item.serverpin_idserver}">
+					<h:outputText value="#{item.serverpin_idserver.mac}" />
+				</p:column>
+				
+				<p:column headerText="Modelo" sortBy="#{item.modelo_idmodelo}"
+					filterBy="#{item.modelo_idmodelo}">
+					<h:outputText value="#{item.modelo_idmodelo.descricao}" />
+				</p:column>
+
+				<!--actionListener - Quando botão for presionado -->
+				<!-- actionListener="#{MBEquipamento.prepararEditar}" actionListener="#{MBEquipamento.prepararExcluir}" -->
+				<!--oncomplete -mostrar janela -->
+				<!--update - atualizar via ajax -->
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgEquipamentoDel').show();"
+						update=":frmEquipamentoDel:pnlEquipamentoDel">
+						<f:setPropertyActionListener target="#{MBEquipamento.equipamento}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil" actionListener="#{MBEquipamento.prepararEditar}"
+						oncomplete="PF('dlgEquipamentoEdit').show();"
+						update=":frmEquipamentoEdit:pnlEquipamentoEdit">
+						<f:setPropertyActionListener target="#{MBEquipamento.equipamento}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBEquipamento.prepararNovo}"
+						oncomplete="PF('dlgEquipamentoNew').show();"
+						update=":frmEquipamentoNew:pnlEquipamentoNew :msgGlobal" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgEquipamentoNew" closable="true"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Novo Equipamento">
+			<h:form id="frmEquipamentoNew">
+				<h:panelGrid id="pnlEquipamentoNew" columns="2">
+					
+					<p:outputLabel value="MAC" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBEquipamento.equipamento.mac}" />
+					
+					<p:outputLabel value="Latitude" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBEquipamento.equipamento.latitude}" />
+					<p:outputLabel value="Longitude" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBEquipamento.equipamento.longitude}" />
+					<p:outputLabel value="Altitude" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBEquipamento.equipamento.altitude}" />
+					
+					<p:outputLabel value="ServerPin" />
+					<p:selectOneMenu
+						value="#{MBEquipamento.equipamento.serverpin_idserver.idserver}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o ServerPin" />
+						<f:selectItems value="#{MBEquipamento.comboServerpin}" var="item"
+							itemValue="#{item.idserver}" itemLabel="#{item.mac}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Modelo" />
+					<p:selectOneMenu
+						value="#{MBEquipamento.equipamento.modelo_idmodelo.idmodelo}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Modelo" />
+						<f:selectItems value="#{MBEquipamento.comboModelo}" var="item"
+							itemValue="#{item.idmodelo}" itemLabel="#{item.descricao}" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<!-- actionListener operação para salvar no banco -->
+					<!-- oncomplete.hide fechar o dialogo -->
+					<!-- update atualizar componete ajax -->
+					<!-- msgGlobal mensagens -->
+					<!-- onclick+.hide() - Para fechar a janela de dialogo -->
+					<!-- tblwEquipamento.clearFilters(); limpar tbl com AJAX -->
+					<p:commandButton value="Gravar"
+						actionListener="#{MBEquipamento.novo}"
+						oncomplete="PF('dlgEquipamentoNew').hide(); tblwEquipamento.clearFilters();"
+						update=":frmEquipamentoList:tblEquipamento :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgEquipamentoNew').hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!--widgetVar - para abrir e fechar dialogo  -->
+		<!--closable - para não poder fechar no X-->
+		<!--draggable - para não poder arrastar -->
+		<!--resizable - para não poder redimensionar -->
+		<!--modal - para travar a janela de baixo-->
+		<!--appendTo - indicar que é separado do formulario principal -->
+		<!--header - cabeçalho do painel -->
+
+		<p:dialog widgetVar="dlgEquipamentoDel" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Excluir">
+			<h:form id="frmEquipamentoDel">
+				<h:panelGrid id="pnlEquipamentoDel" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBEquipamento.equipamento.idequip}" />
+					<p:outputLabel value="MAC" />
+					<h:outputText value="#{MBEquipamento.equipamento.mac}" />
+					<p:outputLabel value="Modelo" />
+					<h:outputText value="#{MBEquipamento.equipamento.modelo_idmodelo.descricao}" />
+					<p:outputLabel value="ServerPin" />
+					<h:outputText value="#{MBEquipamento.equipamento.serverpin_idserver.mac}" />
+	
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBEquipamento.excluir}"
+						oncomplete="PF('dlgEquipamentoDel').hide(); tblwEquipamento.clearFilters();"
+						update=":frmEquipamentoList:tblEquipamento :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgEquipamentoDel').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgEquipamentoEdit" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Editar">
+			<h:form id="frmEquipamentoEdit">
+				<h:panelGrid id="pnlEquipamentoEdit" columns="2">
+				
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBEquipamento.equipamento.idequip}" />
+
+					<p:outputLabel value="MAC" />
+					<p:inputText value="#{MBEquipamento.equipamento.mac}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Latitude" />
+					<p:inputText value="#{MBEquipamento.equipamento.latitude}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Longitude" />
+					<p:inputText value="#{MBEquipamento.equipamento.longitude}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Altitude" />
+					<p:inputText value="#{MBEquipamento.equipamento.altitude}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="ServerPin" />
+					<p:selectOneMenu
+						value="#{MBEquipamento.equipamento.serverpin_idserver.idserver}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o ServerPin" />
+						<f:selectItems value="#{MBEquipamento.comboServerpin}" var="item"
+							itemValue="#{item.idserver}" itemLabel="#{item.mac}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Modelo" />
+					<p:selectOneMenu
+						value="#{MBEquipamento.equipamento.modelo_idmodelo.idmodelo}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Modelo" />
+						<f:selectItems value="#{MBEquipamento.comboModelo}" var="item"
+							itemValue="#{item.idmodelo}" itemLabel="#{item.descricao}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBEquipamento.editar}"
+						oncomplete="PF('dlgEquipamentoEdit').hide(); tblwEquipamento.clearFilters();"
+						update=":frmEquipamentoList:tblEquipamento :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgEquipamentoEdit').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

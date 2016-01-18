@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/templateModel.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal_adm.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmDoencaList">
+			<!-- id do componente para atualização do ajax -->
+			<p:dataTable id="tblDoenca" widgetVar="tblwDoenca"
+				emptyMessage="Nenhum registro" var="item" value="#{MBDoenca.itens}"
+				filteredValue="#{MBDoenca.itensFiltrados}" paginator="true" rows="8">
+
+				<f:facet name="header">
+					<h:outputText value="Lista de Doenças"/>
+    			</f:facet>
+
+				<p:column headerText="Id" sortBy="#{item.iddoenca}"
+					filterBy="#{item.iddoenca}">
+					<h:outputText value="#{item.iddoenca}" />
+				</p:column>
+
+				<p:column headerText="Nome" sortBy="#{item.nome}"
+					filterBy="#{item.nome}">
+					<h:outputText value="#{item.nome}" />
+				</p:column>
+				
+				<p:column headerText="Reino" sortBy="#{item.reino}"
+					filterBy="#{item.reino}">
+					<h:outputText value="#{item.reino}" />
+				</p:column>
+
+				<p:column headerText="Temperatura de Desenvolvimento TB(C°)" sortBy="#{item.tb}"
+					filterBy="#{item.tb}">
+					<h:outputText value="#{item.tb}" />
+				</p:column>
+
+				<p:column headerText="Horas de Temp. Ideal TC(h)" sortBy="#{item.tc}"
+					filterBy="#{item.tc}">
+					<h:outputText value="#{item.tc}" />
+				</p:column>
+
+				<!--actionListener - Quando botão for presionado -->
+				<!-- actionListener="#{MBDoenca.prepararEditar}" actionListener="#{MBDoenca.prepararExcluir}" -->
+				<!--oncomplete -mostrar janela -->
+				<!--update - atualizar via ajax -->
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgDoencaDel').show();"
+						update=":frmDoencaDel:pnlDoencaDel">
+						<f:setPropertyActionListener target="#{MBDoenca.doenca}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('dlgDoencaEdit').show();"
+						update=":frmDoencaEdit:pnlDoencaEdit">
+						<f:setPropertyActionListener target="#{MBDoenca.doenca}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBDoenca.prepararNovo}"
+						oncomplete="PF('dlgDoencaNew').show();"
+						update=":frmDoencaNew:pnlDoencaNew :msgGlobal" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgDoencaNew" closable="true" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)" header="Novo Doenca">
+			<h:form id="frmDoencaNew">
+				<h:panelGrid id="pnlDoencaNew" columns="2">
+
+					<p:outputLabel value="Nome" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBDoenca.doenca.nome}" />
+					<p:outputLabel value="Reino" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBDoenca.doenca.reino}" />
+					<p:outputLabel value="TB" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBDoenca.doenca.tb}" />
+					<p:outputLabel value="TC" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBDoenca.doenca.tc}" />
+						
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<!-- actionListener operação para salvar no banco -->
+					<!-- oncomplete.hide fechar o dialogo -->
+					<!-- update atualizar componete ajax -->
+					<!-- msgGlobal mensagens -->
+					<!-- onclick+.hide() - Para fechar a janela de dialogo -->
+					<!-- tblwDoenca.clearFilters(); limpar tbl com AJAX -->
+					<p:commandButton value="Gravar" actionListener="#{MBDoenca.novo}"
+						oncomplete="PF('dlgDoencaNew').hide(); tblwDoenca.clearFilters();"
+						update=":frmDoencaList:tblDoenca :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgDoencaNew').hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!--widgetVar - para abrir e fechar dialogo  -->
+		<!--closable - para não poder fechar no X-->
+		<!--draggable - para não poder arrastar -->
+		<!--resizable - para não poder redimensionar -->
+		<!--modal - para travar a janela de baixo-->
+		<!--appendTo - indicar que é separado do formulario principal -->
+		<!--header - cabeçalho do painel -->
+
+		<p:dialog widgetVar="dlgDoencaDel" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)" header="Excluir">
+			<h:form id="frmDoencaDel">
+				<h:panelGrid id="pnlDoencaDel" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBDoenca.doenca.iddoenca}" />
+					<p:outputLabel value="Nome" />
+					<h:outputText value="#{MBDoenca.doenca.nome}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBDoenca.excluir}"
+						oncomplete="PF('dlgDoencaDel').hide(); tblwDoenca.clearFilters();"
+						update=":frmDoencaList:tblDoenca :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgDoencaDel').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgDoencaEdit" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)" header="Editar">
+			<h:form id="frmDoencaEdit">
+				<h:panelGrid id="pnlDoencaEdit" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBDoenca.doenca.iddoenca}" />
+
+					<p:outputLabel value="Nome" />
+					<p:inputText value="#{MBDoenca.doenca.nome}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Reino" />
+					<p:inputText value="#{MBDoenca.doenca.reino}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="TB" />
+					<p:inputText value="#{MBDoenca.doenca.tb}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="TC" />
+					<p:inputText value="#{MBDoenca.doenca.tc}" size="30"
+						maxlength="50" />
+						
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar" actionListener="#{MBDoenca.editar}"
+						oncomplete="PF('dlgDoencaEdit').hide(); tblwDoenca.clearFilters();"
+						update=":frmDoencaList:tblDoenca :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgDoencaEdit').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/templateModel.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal_adm.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmAssinaturaList">
+			<!-- id do componente para atualização do ajax -->
+			<p:dataTable id="tblAssinatura" widgetVar="tblwAssinatura"
+				emptyMessage="Nenhum registro" var="item"
+				value="#{MBAssinatura.itens}"
+				filteredValue="#{MBAssinatura.itensFiltrados}" paginator="true"
+				rows="8">
+
+				<f:facet name="header">
+					<h:outputText value="Lista de Assinaturas" />
+				</f:facet>
+
+				<p:column headerText="Id" sortBy="#{item.idassina}"
+					filterBy="#{item.idassina}">
+					<h:outputText value="#{item.idassina}" />
+				</p:column>
+
+				<p:column headerText="Data Inicio" sortBy="#{item.datain}"
+					filterBy="#{item.datain}">
+					<h:outputText value="#{item.datain}" >
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Data Fim" sortBy="#{item.dataout}"
+					filterBy="#{item.dataout}">
+					<h:outputText value="#{item.dataout}" >
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Plano" sortBy="#{item.plano_idplano.tipo}"
+					filterBy="#{item.plano_idplano.tipo}">
+					<h:outputText value="#{item.plano_idplano.tipo}" />
+				</p:column>
+
+				<p:column headerText="Cliente" sortBy="#{item.cliente_idcliente.nome}"
+					filterBy="#{item.cliente_idcliente.nome}">
+					<h:outputText value="#{item.cliente_idcliente.nome}" />
+				</p:column>
+
+				<!--actionListener - Quando botão for presionado -->
+				<!-- actionListener="#{MBAssinatura.prepararEditar}" actionListener="#{MBAssinatura.prepararExcluir}" -->
+				<!--oncomplete -mostrar janela -->
+				<!--update - atualizar via ajax -->
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgAssinaturaDel').show();"
+						update=":frmAssinaturaDel:pnlAssinaturaDel">
+						<f:setPropertyActionListener target="#{MBAssinatura.assinatura}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil" 
+						actionListener="#{MBPlantacao.prepararEditar}"
+						oncomplete="PF('dlgAssinaturaEdit').show();"
+						update=":frmAssinaturaEdit:pnlAssinaturaEdit">
+						<f:setPropertyActionListener target="#{MBAssinatura.assinatura}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBAssinatura.prepararNovo}"
+						oncomplete="PF('dlgAssinaturaNew').show();"
+						update=":frmAssinaturaNew:pnlAssinaturaNew :msgGlobal" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgAssinaturaNew" closable="true"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Novo Assinatura">
+			<h:form id="frmAssinaturaNew">
+				<h:panelGrid id="pnlAssinaturaNew" columns="2">
+
+					<p:outputLabel value="Plano"/>
+  					<p:selectOneMenu value="#{MBAssinatura.assinatura.plano_idplano.idplano}" filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione a plano"/>
+						<f:selectItems value="#{MBAssinatura.comboPlano}" var="item" itemValue="#{item.idplano}" itemLabel="#{item.tipo}"/>
+					</p:selectOneMenu>
+				
+					<p:outputLabel value="Data Entrada" />
+					<p:outputLabel>
+						<p:calendar value="#{MBAssinatura.assinatura.datain}" pattern="dd/MM/yyyy" locale="pt_BR" mask="true" />
+				    	<f:convertDateTime pattern="dd-MM-yyyy" />
+					</p:outputLabel>
+					
+					<p:outputLabel value="Data Termino" />
+					<p:outputLabel>
+						<p:calendar value="#{MBAssinatura.assinatura.dataout}" pattern="dd/MM/yyyy" locale="pt_BR" mask="true" />
+				    	<f:convertDateTime pattern="dd-MM-yyyy" />
+					</p:outputLabel>
+							
+					<p:outputLabel value="Cliente"/>
+  					<p:selectOneMenu value="#{MBAssinatura.assinatura.cliente_idcliente.idcliente}" filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Cliente"/>
+						<f:selectItems value="#{MBAssinatura.comboCliente}" var="item" itemValue="#{item.idcliente}" itemLabel="#{item.nome}"/>
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<!-- actionListener operação para salvar no banco -->
+					<!-- oncomplete.hide fechar o dialogo -->
+					<!-- update atualizar componete ajax -->
+					<!-- msgGlobal mensagens -->
+					<!-- onclick+.hide() - Para fechar a janela de dialogo -->
+					<!-- tblwAssinatura.clearFilters(); limpar tbl com AJAX -->
+					<p:commandButton value="Gravar"
+						actionListener="#{MBAssinatura.novo}"
+						oncomplete="PF('dlgAssinaturaNew').hide(); tblwAssinatura.clearFilters();"
+						update=":frmAssinaturaList:tblAssinatura :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgAssinaturaNew').hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!--widgetVar - para abrir e fechar dialogo  -->
+		<!--closable - para não poder fechar no X-->
+		<!--draggable - para não poder arrastar -->
+		<!--resizable - para não poder redimensionar -->
+		<!--modal - para travar a janela de baixo-->
+		<!--appendTo - indicar que é separado do formulario principal -->
+		<!--header - cabeçalho do painel -->
+
+		<p:dialog widgetVar="dlgAssinaturaDel" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Excluir">
+			<h:form id="frmAssinaturaDel">
+				<h:panelGrid id="pnlAssinaturaDel" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBAssinatura.assinatura.idassina}" />
+					<p:outputLabel value="Plano" />
+					<h:outputText value="#{MBAssinatura.assinatura.plano_idplano.tipo}" />
+					<p:outputLabel value="Cliente" />
+					<h:outputText value="#{MBAssinatura.assinatura.cliente_idcliente.nome}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBAssinatura.excluir}"
+						oncomplete="PF('dlgAssinaturaDel').hide(); tblwAssinatura.clearFilters();"
+						update=":frmAssinaturaList:tblAssinatura :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgAssinaturaDel').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgAssinaturaEdit" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Editar">
+			<h:form id="frmAssinaturaEdit">
+				<h:panelGrid id="pnlAssinaturaEdit" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBAssinatura.assinatura.idassina}" />
+
+					<p:outputLabel value="Plano"/>
+  					<p:selectOneMenu value="#{MBAssinatura.assinatura.plano_idplano.idplano}" filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione a plano"/>
+						<f:selectItems value="#{MBAssinatura.comboPlano}" var="item" itemValue="#{item.idplano}" itemLabel="#{item.tipo}"/>
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Data Entrata" />
+					<p:outputLabel>
+						<p:calendar value="#{MBAssinatura.assinatura.datain}" pattern="dd/MM/yyyy" locale="pt_BR" mask="true" />
+				    	<f:convertDateTime pattern="dd-MM-yyyy" />
+					</p:outputLabel>
+					
+					<p:outputLabel value="Data Termino" />
+					<p:outputLabel>
+						<p:calendar value="#{MBAssinatura.assinatura.dataout}" pattern="dd/MM/yyyy" locale="pt_BR" mask="true" />
+				    	<f:convertDateTime pattern="dd-MM-yyyy" />
+					</p:outputLabel>
+
+					<p:outputLabel value="Cliente"/>
+  					<p:selectOneMenu value="#{MBAssinatura.assinatura.cliente_idcliente.idcliente}" filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Cliente"/>
+						<f:selectItems value="#{MBAssinatura.comboCliente}" var="item" itemValue="#{item.idcliente}" itemLabel="#{item.nome}"/>
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBAssinatura.editar}"
+						oncomplete="PF('dlgAssinaturaEdit').hide(); tblwAssinatura.clearFilters();"
+						update=":frmAssinaturaList:tblAssinatura :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgAssinaturaEdit').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

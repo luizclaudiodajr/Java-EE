@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/templateModel.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal_adm.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmClienteList">
+			<!-- id do componente para atualização do ajax -->
+			<p:dataTable id="tblCliente" widgetVar="tblwCliente"
+				emptyMessage="Nenhum registro" var="item" value="#{MBCliente.itens}"
+				filteredValue="#{MBCliente.itensFiltrados}" paginator="true"
+				rows="8">
+
+				<f:facet name="header">
+					<h:outputText value="Lista de Cliente" />
+				</f:facet>
+
+				<p:column headerText="Id" sortBy="#{item.idcliente}"
+					filterBy="#{item.idcliente}">
+					<h:outputText value="#{item.idcliente}" />
+				</p:column>
+
+				<p:column headerText="Nome" sortBy="#{item.nome}"
+					filterBy="#{item.nome}">
+					<h:outputText value="#{item.nome}" />
+				</p:column>
+
+				<p:column headerText="Celular" sortBy="#{item.celular}"
+					filterBy="#{item.celular}">
+					<h:outputText value="#{item.celular}" />
+				</p:column>
+
+				<p:column headerText="Endereço" sortBy="#{item.endereco}"
+					filterBy="#{item.endereco}">
+					<h:outputText value="#{item.endereco}" />
+				</p:column>
+
+				<p:column headerText="CPF" sortBy="#{item.cpf}"
+					filterBy="#{item.cpf}">
+					<h:outputText value="#{item.cpf}" />
+				</p:column>
+
+				<p:column headerText="RG" sortBy="#{item.rg}" filterBy="#{item.rg}">
+					<h:outputText value="#{item.rg}" />
+				</p:column>
+
+				<p:column headerText="Email" sortBy="#{item.email}"
+					filterBy="#{item.email}">
+					<h:outputText value="#{item.email}" />
+				</p:column>
+
+				<p:column headerText="Senha" sortBy="#{item.senha}"
+					filterBy="#{item.senha}">
+					<h:outputText value="#{item.senha}" />
+				</p:column>
+
+				<p:column headerText="CNPJ" sortBy="#{item.cnpj}"
+					filterBy="#{item.cnpj}">
+					<h:outputText value="#{item.cnpj}" />
+				</p:column>
+
+				<!--actionListener - Quando botão for presionado -->
+				<!-- actionListener="#{MBCliente.prepararEditar}" actionListener="#{MBCliente.prepararExcluir}" -->
+				<!--oncomplete -mostrar janela -->
+				<!--update - atualizar via ajax -->
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgClienteDel').show();"
+						update=":frmClienteDel:pnlClienteDel">
+						<f:setPropertyActionListener target="#{MBCliente.cliente}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('dlgClienteEdit').show();"
+						update=":frmClienteEdit:pnlClienteEdit">
+						<f:setPropertyActionListener target="#{MBCliente.cliente}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBCliente.prepararNovo}"
+						oncomplete="PF('dlgClienteNew').show();"
+						update=":frmClienteNew:pnlClienteNew :msgGlobal" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgClienteNew" closable="true" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Novo Cliente" >
+			<h:form id="frmClienteNew">
+				<h:panelGrid id="pnlClienteNew" columns="2">
+					<p:outputLabel value="Nome" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBCliente.cliente.nome}" required="true" requiredMessage="Campo Nome Obrigatório"/>
+					<p:outputLabel value="Celular" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBCliente.cliente.celular}" />
+					<p:outputLabel value="Endereço" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBCliente.cliente.endereco}" />
+					<p:outputLabel value="CPF" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBCliente.cliente.cpf}" required="true" requiredMessage="Campo CPF Obrigatório"/>
+					<p:outputLabel value="RG" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBCliente.cliente.rg}" required="true" requiredMessage="Campo RG Obrigatório"/>
+					<p:outputLabel value="Email" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBCliente.cliente.email}" />
+					<p:outputLabel value="Senha" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBCliente.cliente.senha}" />
+					<p:outputLabel value="CNPJ" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBCliente.cliente.cnpj}" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<!-- actionListener operação para salvar no banco -->
+					<!-- oncomplete.hide fechar o dialogo -->
+					<!-- update atualizar componete ajax -->
+					<!-- msgGlobal mensagens -->
+					<!-- onclick+.hide() - Para fechar a janela de dialogo -->
+					<!-- tblwCliente.clearFilters(); limpar tbl com AJAX -->
+					<p:commandButton value="Gravar" actionListener="#{MBCliente.novo}"
+						oncomplete="PF('dlgClienteNew').hide(); tblwCliente.clearFilters();"
+						update=":frmClienteList:tblCliente :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgClienteNew').hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!--widgetVar - para abrir e fechar dialogo  -->
+		<!--closable - para não poder fechar no X-->
+		<!--draggable - para não poder arrastar -->
+		<!--resizable - para não poder redimensionar -->
+		<!--modal - para travar a janela de baixo-->
+		<!--appendTo - indicar que é separado do formulario principal -->
+		<!--header - cabeçalho do painel -->
+
+		<p:dialog widgetVar="dlgClienteDel" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)" header="Excluir">
+			<h:form id="frmClienteDel">
+				<h:panelGrid id="pnlClienteDel" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBCliente.cliente.idcliente}" />
+					<p:outputLabel value="Nome" />
+					<h:outputText value="#{MBCliente.cliente.nome}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBCliente.excluir}"
+						oncomplete="PF('dlgClienteDel').hide(); tblwCliente.clearFilters();"
+						update=":frmClienteList:tblCliente :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgClienteDel').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgClienteEdit" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Editar">
+			<h:form id="frmClienteEdit">
+				<h:panelGrid id="pnlClienteEdit" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBCliente.cliente.idcliente}" />
+
+					<p:outputLabel value="Nome" />
+					<p:inputText value="#{MBCliente.cliente.nome}" size="30"
+						maxlength="50" required="true" requiredMessage="Campo Nome Obrigatório"/>
+
+					<p:outputLabel value="Celular" />
+					<p:inputText value="#{MBCliente.cliente.celular}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Endereço" />
+					<p:inputText value="#{MBCliente.cliente.endereco}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="CPF" />
+					<p:inputText value="#{MBCliente.cliente.cpf}" size="30"
+						maxlength="50" required="true" requiredMessage="Campo CPF Obrigatório"/>
+
+					<p:outputLabel value="RG" />
+					<p:inputText value="#{MBCliente.cliente.rg}" size="30"
+						maxlength="50" required="true" requiredMessage="Campo RG Obrigatório"/>
+
+					<p:outputLabel value="Email" />
+					<p:inputText value="#{MBCliente.cliente.email}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Senha" />
+					<p:inputText value="#{MBCliente.cliente.senha}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="CNPJ" />
+					<p:inputText value="#{MBCliente.cliente.cnpj}" size="30"
+						maxlength="50" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBCliente.editar}"
+						oncomplete="PF('dlgClienteEdit').hide(); tblwCliente.clearFilters();"
+						update=":frmClienteList:tblCliente :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgClienteEdit').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/templateModel.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal_adm.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmPlantaList">
+			<!-- id do componente para atualização do ajax -->
+			<p:dataTable id="tblPlanta" widgetVar="tblwPlanta"
+				emptyMessage="Nenhum registro" var="item" value="#{MBPlanta.itens}"
+				filteredValue="#{MBPlanta.itensFiltrados}" paginator="true" rows="8">
+
+				<f:facet name="header">
+					<h:outputText value="Lista de Planta"/>
+    			</f:facet>
+
+				<p:column headerText="Id" sortBy="#{item.idplanta}"
+					filterBy="#{item.idplanta}">
+					<h:outputText value="#{item.idplanta}" />
+				</p:column>
+
+				<p:column headerText="Nome" sortBy="#{item.nome}"
+					filterBy="#{item.nome}">
+					<h:outputText value="#{item.nome}" />
+				</p:column>
+
+				<p:column headerText="Temperatura Min. (c°)" sortBy="#{item.tmin}"
+					filterBy="#{item.tmin}">
+					<h:outputText value="#{item.tmin}" />
+				</p:column>
+
+				<p:column headerText="Temperatura Max. (c°)" sortBy="#{item.tmax}"
+					filterBy="#{item.tmax}">
+					<h:outputText value="#{item.tmax}" />
+				</p:column>
+
+				<p:column headerText="Temperatura otima (c°)" sortBy="#{item.tot}"
+					filterBy="#{item.tot}">
+					<h:outputText value="#{item.tot}" />
+				</p:column>
+
+				<p:column headerText="Horas de Temp. Ideal TC(h)" sortBy="#{item.ic}"
+					filterBy="#{item.ic}">
+					<h:outputText value="#{item.ic}" />
+				</p:column>
+
+				<p:column headerText="Vel. Vento (Km/h)" sortBy="#{item.uc}"
+					filterBy="#{item.uc}">
+					<h:outputText value="#{item.uc}" />
+				</p:column>
+
+				<!--actionListener - Quando botão for presionado -->
+				<!-- actionListener="#{MBPlanta.prepararEditar}" actionListener="#{MBPlanta.prepararExcluir}" -->
+				<!--oncomplete -mostrar janela -->
+				<!--update - atualizar via ajax -->
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgPlantaDel').show();"
+						update=":frmPlantaDel:pnlPlantaDel">
+						<f:setPropertyActionListener target="#{MBPlanta.planta}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('dlgPlantaEdit').show();"
+						update=":frmPlantaEdit:pnlPlantaEdit">
+						<f:setPropertyActionListener target="#{MBPlanta.planta}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBPlanta.prepararNovo}"
+						oncomplete="PF('dlgPlantaNew').show();"
+						update=":frmPlantaNew:pnlPlantaNew :msgGlobal" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgPlantaNew" closable="true" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)" header="Novo Plano">
+			<h:form id="frmPlantaNew">
+				<h:panelGrid id="pnlPlantaNew" columns="2">
+
+					<p:outputLabel value="Nome" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBPlanta.planta.nome}" />
+					<p:outputLabel value="Temperatura Min" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBPlanta.planta.tmin}" />
+					<p:outputLabel value="Temperatura Max" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBPlanta.planta.tmax}" />
+					<p:outputLabel value="Temperatura Otima" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBPlanta.planta.tot}" />
+					<p:outputLabel value="Stack" />
+					<p:inputText size="30" maxlength="50" value="#{MBPlanta.planta.ic}" />
+					<p:outputLabel value="Vel. vento" />
+					<p:inputText size="30" maxlength="50" value="#{MBPlanta.planta.uc}" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<!-- actionListener operação para salvar no banco -->
+					<!-- oncomplete.hide fechar o dialogo -->
+					<!-- update atualizar componete ajax -->
+					<!-- msgGlobal mensagens -->
+					<!-- onclick+.hide() - Para fechar a janela de dialogo -->
+					<!-- tblwPlanta.clearFilters(); limpar tbl com AJAX -->
+					<p:commandButton value="Gravar" actionListener="#{MBPlanta.novo}"
+						oncomplete="PF('dlgPlantaNew').hide(); tblwPlanta.clearFilters();"
+						update=":frmPlantaList:tblPlanta :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgPlantaNew').hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!--widgetVar - para abrir e fechar dialogo  -->
+		<!--closable - para não poder fechar no X-->
+		<!--draggable - para não poder arrastar -->
+		<!--resizable - para não poder redimensionar -->
+		<!--modal - para travar a janela de baixo-->
+		<!--appendTo - indicar que é separado do formulario principal -->
+		<!--header - cabeçalho do painel -->
+
+		<p:dialog widgetVar="dlgPlantaDel" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)" header="Excluir">
+			<h:form id="frmPlantaDel">
+				<h:panelGrid id="pnlPlantaDel" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBPlanta.planta.idplano}" />
+					<p:outputLabel value="Nome" />
+					<h:outputText value="#{MBPlanta.planta.nome}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBPlanta.excluir}"
+						oncomplete="PF('dlgPlantaDel').hide(); tblwPlanta.clearFilters();"
+						update=":frmPlantaList:tblPlanta :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgPlantaDel').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgPlantaEdit" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)" header="Editar">
+			<h:form id="frmPlantaEdit">
+				<h:panelGrid id="pnlPlantaEdit" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBPlanta.planta.idplanta}" />
+
+					<p:outputLabel value="Nome" />
+					<p:inputText value="#{MBPlanta.planta.nome}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Temperatura Min" />
+					<p:inputText value="#{MBPlanta.planta.tmin}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Temperatura Max" />
+					<p:inputText value="#{MBPlanta.planta.tmax}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Temperatura Otima" />
+					<p:inputText value="#{MBPlanta.planta.tot}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="IC" />
+					<p:inputText value="#{MBPlanta.planta.ic}" size="30"
+						maxlength="50" />
+					
+					<p:outputLabel value="Vel. Vento" />
+					<p:inputText value="#{MBPlanta.planta.uc}" size="30"
+						maxlength="50" />
+						
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar" actionListener="#{MBPlanta.editar}"
+						oncomplete="PF('dlgPlantaEdit').hide(); tblwPlanta.clearFilters();"
+						update=":frmPlantaList:tblPlanta :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgPlantaEdit').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

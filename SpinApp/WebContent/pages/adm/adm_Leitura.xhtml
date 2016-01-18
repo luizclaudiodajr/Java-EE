@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/templateModel.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal_adm.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmLeituraList">
+			<!-- id do componente para atualização do ajax -->
+			<p:dataTable id="tblLeitura" widgetVar="tblwLeitura"
+				emptyMessage="Nenhum registro" var="item"
+				value="#{MBLeitura.itens}"
+				filteredValue="#{MBLeitura.itensFiltrados}" paginator="true"
+				rows="8">
+
+				<f:facet name="header">
+					<h:outputText value="Lista de Leitura" />
+				</f:facet>
+
+				<p:column headerText="Id" sortBy="#{item.idleitura}"
+					filterBy="#{item.idleitura}">
+					<h:outputText value="#{item.idleitura}" />
+				</p:column>
+
+				<p:column headerText="Valor" sortBy="#{item.valor}"
+					filterBy="#{item.valor}">
+					<h:outputText value="#{item.valor}" />
+				</p:column>
+
+				<p:column headerText="Data" sortBy="#{item.data}"
+					filterBy="#{item.data}">
+					<h:outputText value="#{item.data}" >
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Hora" sortBy="#{item.hora}"
+					filterBy="#{item.hora}">
+					<h:outputText value="#{item.hora}">
+						<f:convertDateTime pattern="HH:mm:ss aa" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Sensor" sortBy="#{item.sensor_idsensor.idsensor}"
+					filterBy="#{item.sensor_idsensor.idsensor}">
+					<h:outputText value="#{item.sensor_idsensor.idsensor}" />
+				</p:column>
+
+				<!--actionListener - Quando botão for presionado -->
+				<!-- actionListener="#{MBLeitura.prepararEditar}" actionListener="#{MBLeitura.prepararExcluir}" -->
+				<!--oncomplete -mostrar janela -->
+				<!--update - atualizar via ajax -->
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgSensorDel').show();"
+						update=":frmSensorDel:pnlSensorDel">
+						<f:setPropertyActionListener target="#{MBLeitura.leitura}"
+							value="#{item}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil" 
+						actionListener="#{MBLeitura.prepararEditar}"
+						oncomplete="PF('dlgLeituraEdit').show();"
+						update=":frmLeituraEdit:pnlLeituraEdit">
+						<f:setPropertyActionListener target="#{MBLeitura.leitura}"
+							value="#{item}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{MBLeitura.prepararNovo}"
+						oncomplete="PF('dlgLeituraNew').show();"
+						update=":frmLeituraNew:pnlLeituraNew :msgGlobal" />
+				</f:facet>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgLeituraNew" closable="true"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Nova Leitura">
+			<h:form id="frmLeituraNew">
+				<h:panelGrid id="pnlLeituraNew" columns="2">
+
+					<p:outputLabel value="Valor" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBLeitura.leitura.valor}" />
+							
+					<p:outputLabel value="Data" />
+					<p:outputLabel>
+						<p:calendar value="#{MBLeitura.leitura.data}" pattern="dd/MM/yyyy" locale="pt_BR" mask="true" />
+				    	<f:convertDateTime pattern="yyyy-MM-dd" />
+					</p:outputLabel>
+					
+					<p:outputLabel value="Hora" />
+					<p:outputLabel>
+						<p:calendar value="#{MBLeitura.leitura.hora}" pattern="HH:mm a" timeOnly="true" timeZone="America/Sao_Paulo"/>
+				    	<f:convertDateTime pattern="HH:mm:ss as"  />
+					</p:outputLabel>
+
+					<p:outputLabel value="Sensor"/>
+  					<p:selectOneMenu value="#{MBLeitura.leitura.sensor_idsensor.idsensor}" filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o sensor"/>
+						<f:selectItems value="#{MBLeitura.comboSensor}" var="item" itemValue="#{item.idsensor}" itemLabel="#{item.idsensor}"/>
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="3">
+					<!-- actionListener operação para salvar no banco -->
+					<!-- oncomplete.hide fechar o dialogo -->
+					<!-- update atualizar componete ajax -->
+					<!-- msgGlobal mensagens -->
+					<!-- onclick+.hide() - Para fechar a janela de dialogo -->
+					<!-- tblwLeitura.clearFilters(); limpar tbl com AJAX -->
+					<p:commandButton value="Gravar"
+						actionListener="#{MBLeitura.novo}"
+						oncomplete="PF('dlgLeituraNew').hide(); tblwLeitura.clearFilters();"
+						update=":frmLeituraList:tblLeitura :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgLeituraNew').hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!--widgetVar - para abrir e fechar dialogo  -->
+		<!--closable - para não poder fechar no X-->
+		<!--draggable - para não poder arrastar -->
+		<!--resizable - para não poder redimensionar -->
+		<!--modal - para travar a janela de baixo-->
+		<!--appendTo - indicar que é separado do formulario principal -->
+		<!--header - cabeçalho do painel -->
+
+		<p:dialog widgetVar="dlgSensorDel" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Excluir">
+			<h:form id="frmSensorDel">
+				<h:panelGrid id="pnlSensorDel" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBLeitura.leitura.idleitura}" />
+					<p:outputLabel value="Valor" />
+					<h:outputText value="#{MBLeitura.leitura.valor}" />
+					<p:outputLabel value="Cliente" />
+					<h:outputText value="#{MBLeitura.leitura.sensor_idsensor.idsensor}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir"
+						actionListener="#{MBLeitura.excluir}"
+						oncomplete="PF('dlgSensorDel').hide(); tblwLeitura.clearFilters();"
+						update=":frmLeituraList:tblLeitura :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgSensorDel').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgLeituraEdit" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Editar">
+			<h:form id="frmLeituraEdit">
+				<h:panelGrid id="pnlLeituraEdit" columns="2">
+					<p:outputLabel value="ID" />
+					<h:outputText value="#{MBLeitura.leitura.idleitura}" />
+					
+					<p:outputLabel value="Valor" />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBLeitura.leitura.valor}" />
+
+					<p:outputLabel value="Data" />
+					<p:outputLabel>
+						<p:calendar value="#{MBLeitura.leitura.data}" pattern="dd/MM/yyyy" locale="pt_BR" mask="true" />
+				    	<f:convertDateTime pattern="yyyy-MM-dd" />
+					</p:outputLabel>
+					
+					<p:outputLabel value="Hora" />
+					<p:outputLabel>
+						<p:calendar value="#{MBLeitura.leitura.hora}" pattern="HH:mm a" timeOnly="true" locale="pt_BR" />
+				    	<f:convertDateTime pattern="HH:mm a" />
+					</p:outputLabel>
+
+
+
+					<p:outputLabel value="Sensor"/>
+  					<p:selectOneMenu value="#{MBLeitura.leitura.sensor_idsensor.idsensor}" filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione o Sensor"/>
+						<f:selectItems value="#{MBLeitura.comboSensor}" var="item" itemValue="#{item.idsensor}" itemLabel="#{item.idsensor}"/>
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBLeitura.editar}"
+						oncomplete="PF('dlgLeituraEdit').hide(); tblwLeitura.clearFilters();"
+						update=":frmLeituraList:tblLeitura :msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgLeituraEdit').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>
